@@ -626,25 +626,26 @@ metadata:
   name: ingress-nginx-system-admission
   namespace: ingress-nginx-system
 webhooks:
-  - name: validate.nginx.ingress.kubernetes.io
-    rules:
-      - apiGroups:
-          - extensions
-          - networking.k8s.io
-        apiVersions:
-          - v1beta1
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - ingresses
-    failurePolicy: Fail
-    sideEffects: None
-    admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
       service:
         namespace: ingress-nginx-system
         name: ingress-nginx-system-controller-admission
-        path: /extensions/v1beta1/ingresses
+        path: /extensions/v1/ingresses
+  failurePolicy: Fail
+  matchPolicy: Equivalent
+  name: validate.nginx.ingress.kubernetes.io
+  rules:
+    - apiGroups:
+        - networking.k8s.io
+      apiVersions:
+        - v1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - ingresses
+    sideEffects: None
+
+    

@@ -38,7 +38,6 @@ metadata:
   annotations:
     kubernetes.io/service-account.name: ingress-nginx-system-admission
 type: kubernetes.io/service-account-token
-
 ---
 apiVersion: v1
 kind: Secret
@@ -629,23 +628,23 @@ webhooks:
 - admissionReviewVersions:
   - v1
   clientConfig:
-      service:
-        namespace: ingress-nginx-system
-        name: ingress-nginx-system-controller-admission
-        path: /extensions/v1/ingresses
+    service:
+      namespace: ingress-nginx-system
+      name: ingress-nginx-system-controller-admission
+      path: /extensions/v1/ingresses
   failurePolicy: Fail
   matchPolicy: Equivalent
   name: validate.nginx.ingress.kubernetes.io
   rules:
-    - apiGroups:
-        - networking.k8s.io
-      apiVersions:
-        - v1
-      operations:
-        - CREATE
-        - UPDATE
-      resources:
-        - ingresses
-    sideEffects: None
+  - apiGroups:
+    - networking.k8s.io
+    apiVersions:
+      - v1
+    operations:
+      - CREATE
+      - UPDATE
+    resources:
+      - ingresses
+  sideEffects: None
 
     

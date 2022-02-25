@@ -1,0 +1,93 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingress-nginx-system-admission-create
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app.kubernetes.io/name: ingress-nginx-system
+    app.kubernetes.io/instance: ingress-nginx-system
+    app.kubernetes.io/component: admission-webhook
+  namespace: ingress-nginx-system
+spec:
+  template:
+    metadata:
+      name: ingress-nginx-system-admission-create
+      labels:
+        app.kubernetes.io/name: ingress-nginx-system
+        app.kubernetes.io/instance: ingress-nginx-system
+        app.kubernetes.io/component: admission-webhook
+    spec:
+      containers:
+        - name: create
+          image: docker.io/jettech/kube-webhook-certgen:v1.2.2
+          volumeMounts:
+          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+            name: ingress-nginx-system-admission-token
+
+          imagePullPolicy: IfNotPresent
+          args:
+            - create
+            - --host=ingress-nginx-system-controller-admission,ingress-nginx-system-controller-admission.ingress-nginx-system.svc
+            - --namespace=ingress-nginx-system
+            - --secret-name=ingress-nginx-system-admission
+            - --kubeconfig=/etc/kubernetes/kubeconfig
+      restartPolicy: OnFailure
+      serviceAccountName: ingress-nginx-system-admission
+      volumes:
+      - name: ingress-nginx-system-admission-token
+        secret:
+          defaultMode: 420
+          secretName: ingress-nginx-system-admission-token
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingress-nginx-system-admission-patch
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app.kubernetes.io/name: ingress-nginx-system
+    app.kubernetes.io/instance: ingress-nginx-system
+    app.kubernetes.io/component: admission-webhook
+  namespace: ingress-nginx-system
+spec:
+  template:
+    metadata:
+      name: ingress-nginx-system-admission-patch
+      labels:
+        app.kubernetes.io/name: ingress-nginx-system
+        app.kubernetes.io/instance: ingress-nginx-system
+        app.kubernetes.io/component: admission-webhook
+    spec:
+      containers:
+        - name: patch
+          image: docker.io/jettech/kube-webhook-certgen:v1.2.2
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+            name: ingress-nginx-system-admission-token
+
+          args:
+            - patch
+            - --webhook-name=ingress-nginx-system-admission
+            - --namespace=ingress-nginx-system
+            - --patch-mutating=false
+            - --secret-name=ingress-nginx-system-admission
+            - --patch-failure-policy=Fail
+            - --kubeconfig=/etc/kubernetes/kubeconfig
+      restartPolicy: OnFailure
+      serviceAccountName: ingress-nginx-system-admission
+      volumes:
+      - name: ingress-nginx-system-admission-token
+        secret:
+          defaultMode: 420
+          secretName: ingress-nginx-system-admission-token      
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000

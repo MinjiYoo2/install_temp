@@ -408,7 +408,6 @@ metadata:
   annotations:
     kubernetes.io/service-account.name: ingress-nginx-admission
 type: kubernetes.io/service-account-token
-​
 ---
 apiVersion: v1
 kind: Secret

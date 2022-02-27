@@ -102,7 +102,6 @@ spec:
           readOnly: true
         - name: ingress-nginx
           mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-​
       dnsPolicy: ClusterFirst
       nodeSelector:
         kubernetes.io/os: linux
@@ -115,7 +114,6 @@ spec:
       - name: ingress-nginx
         secret:
           secretName: ingress-nginx
-​
 ---
 apiVersion: batch/v1
 kind: Job
@@ -165,7 +163,6 @@ spec:
         volumeMounts:
           - name: ingress-nginx-admission
             mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-​
         imagePullPolicy: IfNotPresent
         name: create
         securityContext:
@@ -177,7 +174,6 @@ spec:
         runAsNonRoot: false
         runAsUser: 2000
       serviceAccountName: ingress-nginx-admission
-​
 ---
 apiVersion: batch/v1
 kind: Job
@@ -215,7 +211,6 @@ spec:
       containers:
       - args:
         - patch
-​
         - --webhook-name=ingress-nginx-admission
         - --namespace=$(POD_NAMESPACE)
         - --patch-mutating=false

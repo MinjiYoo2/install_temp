@@ -154,6 +154,7 @@ spec:
         - --host=ingress-nginx-controller-admission,ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
         - --namespace=$(POD_NAMESPACE)
         - --secret-name=ingress-nginx-admission
+        - --kubeconfig=/etc/kubernetes/kubeconfig
         env:
         - name: POD_NAMESPACE
           valueFrom:
@@ -216,6 +217,7 @@ spec:
         - --patch-mutating=false
         - --secret-name=ingress-nginx-admission
         - --patch-failure-policy=Fail
+        - --kubeconfig=/etc/kubernetes/kubeconfig
         env:
         - name: POD_NAMESPACE
           valueFrom:

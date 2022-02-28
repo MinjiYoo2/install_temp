@@ -473,7 +473,7 @@ spec:
     spec:
       containers:
         - name: patch
-          image: docker.io/jettech/kube-webhook-certgen:v1.2.2
+          image: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
@@ -631,7 +631,7 @@ webhooks:
     service:
       namespace: ingress-nginx-system
       name: ingress-nginx-system-controller-admission
-      path: /extensions/v1/ingresses
+      path: /networking/v1/ingresses
   failurePolicy: Fail
   matchPolicy: Equivalent
   name: validate.nginx.ingress.kubernetes.io
